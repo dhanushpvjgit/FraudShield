@@ -1,0 +1,16 @@
+# Build
+target/
+*.log
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Local config / OS
+.env
+.DS_Store
+HELP.md

@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: fraudshield
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/fraudshield}
+    username: ${DB_USER:fraudshield}
+    password: ${DB_PASSWORD:fraudshield}
+  jpa:
+    hibernate:
+      ddl-auto: validate        # Flyway owns the schema; Hibernate only validates it
+    open-in-view: false
+  flyway:
+    enabled: true
+  mvc:
+    problemdetails:
+      enabled: true             # RFC 7807 error bodies
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        "[spring.json.add.type.headers]": false
+        "[enable.idempotence]": true
+        "[linger.ms]": 5
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[fraudshield.ingest.duration]": true
+
+fraudshield:
+  topics:
+    transactions: transactions.v1
+  simulator:
+    seed: 42
